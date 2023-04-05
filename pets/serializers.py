@@ -13,4 +13,4 @@ class PetSerializer(serializers.Serializer):
         choices=SexOptions.choices, default=SexOptions.NOT_INFORMED
     )
     group = GroupSerializer()
-    traits = TraitSerializer(default=None, many=True)
+    traits = TraitSerializer(many=True)
