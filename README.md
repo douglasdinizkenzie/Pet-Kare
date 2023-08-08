@@ -1,87 +1,331 @@
 # M5 - Pet Kare
 
-## Como rodar os testes localmente
 
-- Verifique se os pacotes pytest e/ou pytest-testdox estão instalados globalmente em seu sistema:
+## 1 - Sobre
 
-```shell
-pip list
-```
+Pet Kare é uma aplicação que simula um pet shop.
 
-- Caso seja listado o pytest e/ou pytest-testdox e/ou pytest-django em seu ambiente global, utilize os seguintes comando para desinstalá-los globalmente:
+--- 
 
-```shell
-pip uninstall pytest pytest-testdox -y
-```
+## 2 - Tecnologias
 
-<hr>
+Um pouco das tecnologias que foram utilizadas no projeto: 
 
-## Próximos passos:
+- [Python](https://www.python.org)
+- [Django](https://www.djangoproject.com)
+- [django rest framework](https://www.django-rest-framework.org)
 
-### 1 Crie seu ambiente virtual:
+---
+
+## 3 - Diagrama 
+
+Diagrama da API definindo as relações entre as tabelas do banco de dados.
+
+![DER](DER.png)
+
+---
+
+## 4 - Instalação e uso
+
+### Requisitos:
+- [Python](https://www.python.org)
+- [pip](https://pypi.org/project/pip/)
+
+
+Clone o projeto em sua máquina e crie um ambiente virtual (venv) com o comando:
 
 ```shell
 python -m venv venv
 ```
 
-### 2 Ative seu venv:
+Em seguida, ative o venv:
 
 ```shell
-# linux:
-source venv/bin/activate
-
-# windows (powershell):
-.\venv\Scripts\activate
-
-# windows (git bash):
-source venv/Scripts/activate
+(WINDOWS)        source venv/Scripts/Activate
+(Linux ou macOS) source venv/bin/activate
 ```
 
-### 3 Instalar o pacote <strong>pytest-testdox</strong>:
+Execute as migrations com o comando:
 
-```shell
-pip install pytest-testdox pytest-django
+```
+python manage.py migrate
 ```
 
-### 4 Rodar os testes referentes a cada tarefa isoladamente:
+Para rodar o servidor localmente: 
 
-Exemplo:
-
-- Tarefa 1
-
-```shell
-pytest --testdox -vvs tests/tarefas/tarefa_1/
+```
+python manage.py runserver
 ```
 
-- Tarefa 2
+#### As requisições podem ser testadas em programas como o [Insomnia](https://insomnia.rest/download), [Postman](https://www.postman.com), etc!
 
-```shell
-pytest --testdox -vvs tests/tarefas/tarefa_2/
+---
+
+## 5 - Endpoints
+
+| Método   | Rota                             | Descrição                                                    |
+|----------|----------------------------------|--------------------------------------------------------------|                                             
+| POST     | /api/pets/                       | Cadastrar pet.                                               |
+| GET      | /api/pets/                       | Listar pets.                                                 |
+| GET      | api/pets/?trait=nome_da_trait    | Filtragem de pets que possuem a trait passada por query param.| 
+| GET      | api/pets/<pet_id>/               | Busca de pet.                                                |
+| PATCH    | api/pets/<pet_id>/               | Atualização de pet.                                          |
+| DELETE   | api/pets/<pet_id>/               | Deleção de pet.                                              |
+
+
+---
+
+### CADASTRAR PET
+
+### `/api/pets/`
+
+### Requisição
+
+```json
+{
+  "name": "Doguinho",
+  "age": "10",
+  "weight": 30,
+  "group": {
+    "scientific_name": "Golden Retriever"
+  },
+  "traits": [
+    {
+      "trait_name": "Brincalhão"
+    },
+    {
+      "trait_name": "Animado"
+    }
+  ]
+}
 ```
 
-- Tarefa 3
+#### Obs: O campo "sex" é opcional, e, caso preenchido, deve receber "Male" ou "Female", caso o campo não seja enviado, será preenchido automáticamente como "Not Informed".
 
-```shell
-pytest --testdox -vvs tests/tarefas/tarefa_3/
+
+### Retorno esperado
+**STATUS 201**
+
+```json
+{
+  "id": 1,
+  "name": "Doguinho",
+  "age": 10,
+  "weight": 30,
+  "sex": "Not Informed",
+  "group": {
+    "id": 1,
+    "scientific_name": "Golden Retriever",
+    "created_at": "2023-08-08T18:25:40.183774Z"
+  },
+  "traits": [
+    {
+      "id": 1,
+      "trait_name": "Brincalhão",
+      "created_at": "2023-08-08T18:32:20.440056Z"
+    },
+    {
+      "id": 2,
+      "trait_name": "Animado",
+      "created_at": "2023-08-08T18:32:20.440056Z"
+    }
+  ]
+}
+```
+---
+
+### Listar Pets.
+
+### `/api/pets/`
+
+#### Não é necessário um corpo para requisição.
+
+### Retorno esperado
+**STATUS 200**
+
+```json
+{
+  "count": 2,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 1,
+      "name": "Doguinho",
+      "age": 10,
+      "weight": 30,
+      "sex": "Not Informed",
+      "group": {
+        "id": 1,
+        "scientific_name": "Golden Retriever",
+        "created_at": "2023-08-08T18:25:40.183774Z"
+      },
+      "traits": [
+        {
+          "id": 1,
+          "trait_name": "Brincalhão",
+          "created_at": "2023-08-08T18:32:20.440056Z"
+        },
+        {
+          "id": 2,
+          "trait_name": "Animado",
+          "created_at": "2023-08-08T18:32:20.440056Z"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Outro doguinho",
+      "age": 5,
+      "weight": 20,
+      "sex": "Not Informed",
+      "group": {
+        "id": 1,
+        "scientific_name": "buldog",
+        "created_at": "2023-08-08T18:25:40.183774Z"
+      },
+      "traits": [
+        {
+          "id": 1,
+          "trait_name": "Engraçado",
+          "created_at": "2023-08-08T18:32:20.440056Z"
+        }
+      ]
+    }
+  ]
+}
 ```
 
-Você também pode rodar cada método de teste isoladamente seguindo uma substring, adicionando a flag `-k` seguido da substring a ser encontrada
-(atenção, se o pytest achar multiplos métodos que contenham a mesma substring em seu nome, ele executará todos):
+---
 
-```shell
-pytest --testdox -vvsk test_can_not_create_pet_when_missing_keys
+### Listar por características.
+
+### `api/pets/?trait=nome_da_trait`
+
+#### Não é necessário um corpo para requisição.
+
+### Exemplo: api/pets/?trait=Engraçado
+
+### Retorno esperado
+**STATUS 200**
+
+```json
+{
+  "count": 1,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 3,
+      "name": "Outro doguinho",
+      "age": 5,
+      "weight": 20,
+      "sex": "Not Informed",
+      "group": {
+        "id": 1,
+        "scientific_name": "buldog",
+        "created_at": "2023-08-08T18:25:40.183774Z"
+      },
+      "traits": [
+        {
+          "id": 1,
+          "trait_name": "Engraçado",
+          "created_at": "2023-08-08T18:32:20.440056Z"
+        }
+      ]
+    }
+  ]
+}
 ```
 
-<hr>
+### Busca de pet.
 
-Você também pode rodar cada método de teste isoladamente:
+### `api/pets/<pet_id>/`
 
-```shell
-pytest --testdox -vvs caminho/para/o/arquivo/de/teste::NomeDaClasse::nome_do_metodo_de_teste
+#### Não é necessário um corpo para requisição.
+
+### Exemplo: api/pets/3/
+
+### Retorno esperado
+**STATUS 200**
+
+```json
+ {
+      "id": 3,
+      "name": "Outro doguinho",
+      "age": 5,
+      "weight": 20,
+      "sex": "Not Informed",
+      "group": {
+        "id": 1,
+        "scientific_name": "buldog",
+        "created_at": "2023-08-08T18:25:40.183774Z"
+      },
+      "traits": [
+        {
+          "id": 1,
+          "trait_name": "Engraçado",
+          "created_at": "2023-08-08T18:32:20.440056Z"
+        }
 ```
 
-Exemplo: executar somente "test_can_get_product_by_id".
+---
 
-```shell
-pytest --testdox -vvs tests/tarefas/tarefa_1/test_get_product_by_id.py::TestGetProductById::test_can_get_product_by_id
+### Atualizar pet.
+
+### `api/pets/<pet_id>/`
+
+### Exemplo: api/pets/3/
+
+### Requisição
+
+```json
+{
+    "name": "Doguinho Patch"
+}
 ```
+
+### Retorno esperado
+**STATUS 200**
+
+```json
+ {
+      "id": 3,
+      "name": "Doguinho Patch",
+      "age": 5,
+      "weight": 20,
+      "sex": "Not Informed",
+      "group": {
+        "id": 1,
+        "scientific_name": "buldog",
+        "created_at": "2023-08-08T18:25:40.183774Z"
+      },
+      "traits": [
+        {
+          "id": 1,
+          "trait_name": "Engraçado",
+          "created_at": "2023-08-08T18:32:20.440056Z"
+        }
+```
+
+---
+
+### Deleção de pet.
+
+### `api/pets/<pet_id>/`
+
+#### Não é necessário um corpo para requisição.
+
+### Exemplo: api/pets/3/
+
+### Retorno esperado
+**STATUS 204**
+
+---
+
+
+
+
+
+
+
